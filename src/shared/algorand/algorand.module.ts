@@ -4,6 +4,6 @@ import { AccountService } from './account/account.service';
 
 @Module({
   providers: [AlgorandService, AccountService],
-  exports: [AlgorandService],
+  exports: [AlgorandService, AccountService],
 })
 export class AlgorandModule {}
