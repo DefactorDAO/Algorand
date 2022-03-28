@@ -1,7 +1,10 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { IpfsService } from './ipfs.service';
 
 @Module({
-  providers: [IpfsService]
+  imports: [HttpModule],
+  providers: [IpfsService],
+  exports: [IpfsService],
 })
 export class IpfsModule {}
