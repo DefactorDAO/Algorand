@@ -1,13 +1,13 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { AxiosResponse } from 'axios';
 import { lastValueFrom } from 'rxjs';
+import { PinataResponseDto } from './dto/pinata-response.dto';
 
 @Injectable()
 export class IpfsService {
   constructor(private readonly httpService: HttpService) {}
 
-  async pinJsonToIpfs(json): Promise<AxiosResponse> {
+  async pinJsonToIpfs(json): Promise<PinataResponseDto> {
     const httpObs = this.httpService.post(
       'https://api.pinata.cloud/pinning/pinJSONToIPFS',
       json,
