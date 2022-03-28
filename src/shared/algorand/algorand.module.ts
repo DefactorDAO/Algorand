@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { AlgorandService } from './algorand.service';
 
-@Module({})
+@Module({
+  providers: [AlgorandService]
+})
 export class AlgorandModule {}
