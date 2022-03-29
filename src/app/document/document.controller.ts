@@ -1,12 +1,11 @@
 import {
   Controller,
   Post,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
   Version,
 } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { DocumentService } from './document.service';
 
 @Controller('document')
