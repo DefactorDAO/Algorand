@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom } from 'rxjs';
-import { AesService } from '../aes/aes.service';
 import { PinataResponseDto } from './dto/pinata-response.dto';
 import { PinataPins } from './enum/pinata-endpoint.enum';
 import * as FormData from 'form-data';
@@ -11,10 +10,7 @@ import * as FormData from 'form-data';
 export class IpfsService {
   private endPoint = 'https://api.pinata.cloud/pinning';
 
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly aesService: AesService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
   async getPinnedData(ipfsHash: string) {
     return ipfsHash;
