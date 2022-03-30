@@ -20,16 +20,8 @@ export class IpfsService {
     return this.pinataRequest(PinataPins.JSON_TO_IPFS, json);
   }
 
-  async pinFilesToIPFS(files: Express.Multer.File[]) {
-    const data = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      const encrypted = this.aesService.encrypt(files[i].buffer);
-      const fileContent = Buffer.from(encrypted);
-      data.append('file', fileContent as any, {
-        filepath: `files/${files[i].originalname}`,
-      });
-    }
-    return this.pinataRequest(PinataPins.FILE_TO_IPFS, data);
+  async pinFilesToIPFS(files: FormData) {
+    return this.pinataRequest(PinataPins.FILE_TO_IPFS, files);
   }
 
   // ----------- non controller methods -------------
