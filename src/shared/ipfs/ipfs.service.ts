@@ -16,6 +16,10 @@ export class IpfsService {
     private readonly aesService: AesService,
   ) {}
 
+  async getPinnedData(ipfsHash: string) {
+    return ipfsHash;
+  }
+
   async pinJsonToIpfs(json) {
     return this.pinataRequest(PinataPins.JSON_TO_IPFS, json);
   }
