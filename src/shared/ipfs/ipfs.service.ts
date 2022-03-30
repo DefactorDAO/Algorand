@@ -2,21 +2,34 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom } from 'rxjs';
+import { AesService } from '../aes/aes.service';
 import { PinataResponseDto } from './dto/pinata-response.dto';
 import { PinataPins } from './enum/pinata-endpoint.enum';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class IpfsService {
   private endPoint = 'https://api.pinata.cloud/pinning';
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly aesService: AesService,
+  ) {}
 
   async pinJsonToIpfs(json) {
     return this.pinataRequest(PinataPins.JSON_TO_IPFS, json);
   }
 
-  async pinFileToIPFS(file) {
-    return this.pinataRequest(PinataPins.FILE_TO_IPFS, file);
+  async pinFilesToIPFS(files: Express.Multer.File[]) {
+    const data = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      const encrypted = this.aesService.encrypt(files[i].buffer);
+      const fileContent = Buffer.from(encrypted);
+      data.append('file', fileContent as any, {
+        filepath: `files/${files[i].originalname}`,
+      });
+    }
+    return this.pinataRequest(PinataPins.FILE_TO_IPFS, data);
   }
 
   // ----------- non controller methods -------------
