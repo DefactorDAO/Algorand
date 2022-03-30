@@ -1,5 +1,7 @@
 import {
   Controller,
+  Get,
+  Param,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -14,6 +16,12 @@ import { FilesUploadDto } from './dto/files-upload.dto';
 @Controller('document')
 export class DocumentController {
   constructor(private readonly documentService: DocumentService) {}
+
+  @Version('1')
+  @Get('ipfs/:ipfsHash')
+  getIpfsData(@Param('ipfsHash') ipfsHash: string) {
+    return this.documentService.getIpfsData(ipfsHash);
+  }
 
   @Version('1')
   @Post('ipfs')
