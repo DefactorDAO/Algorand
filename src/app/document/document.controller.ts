@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
   Version,
@@ -19,8 +21,12 @@ export class DocumentController {
 
   @Version('1')
   @Get('ipfs/:ipfsHash')
-  getIpfsData(@Param('ipfsHash') ipfsHash: string) {
-    return this.documentService.getIpfsData(ipfsHash);
+  @ApiOperation({ summary: 'get the file in directory' })
+  getIpfsData(
+    @Param('ipfsHash') ipfsHash: string,
+    @Query('fileName') fileName: string,
+  ) {
+    return this.documentService.getIpfsData(ipfsHash, fileName);
   }
 
   @Version('1')

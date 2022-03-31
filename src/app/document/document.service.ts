@@ -10,8 +10,8 @@ export class DocumentService {
     private readonly aesService: AesService,
   ) {}
 
-  async getIpfsData(ipfsHash: string) {
-    return this.ipfsService.getPinnedData(ipfsHash);
+  async getIpfsData(ipfsHash: string, fileName) {
+    return this.ipfsService.getPinnedData(ipfsHash, fileName);
   }
 
   async uploadToIpfs(files: Express.Multer.File[]) {
