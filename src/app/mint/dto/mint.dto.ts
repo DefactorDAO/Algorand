@@ -37,7 +37,7 @@ class DocumentDirectory {
   hash: string;
 
   @ApiProperty()
-  fullPath: string;
+  fileNames: [string];
 }
 
 export class MintDto {
