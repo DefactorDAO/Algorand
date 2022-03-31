@@ -17,8 +17,7 @@ export class DocumentService {
   async uploadToIpfs(files: Express.Multer.File[]) {
     const data = new FormData();
     for (let i = 0; i < files.length; i++) {
-      const encrypted = this.aesService.encrypt(files[i].buffer);
-      const fileContent = Buffer.from(encrypted);
+      const fileContent = Buffer.from(files[i].buffer);
       data.append('file', fileContent as any, {
         filepath: `files/${files[i].originalname}`,
       });
