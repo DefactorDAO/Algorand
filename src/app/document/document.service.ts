@@ -16,18 +16,24 @@ export class DocumentService {
 
   async uploadToIpfs(files: Express.Multer.File[]) {
     const data = new FormData();
+    const fileNames = [];
     for (let i = 0; i < files.length; i++) {
       const fileContent = Buffer.from(files[i].buffer);
+      fileNames.push(files[i].originalname);
       data.append('file', fileContent as any, {
         filepath: `files/${files[i].originalname}`,
       });
     }
-    return this.ipfsService.pinFilesToIPFS(data);
+    const pinataReponse = await this.ipfsService.pinFilesToIPFS(data);
+    pinataReponse['FileNames'] = fileNames;
+    return pinataReponse;
   }
 
   async uploadEncToIpfs(files: Express.Multer.File[]) {
     const data = new FormData();
+    const fileNames = [];
     for (let i = 0; i < files.length; i++) {
+      fileNames.push(files[i].originalname);
       const encryptedFileBase64 = Buffer.from(
         this.aesService.encrypt(files[i].buffer),
       ).toString('base64');
@@ -35,6 +41,8 @@ export class DocumentService {
         filepath: `files/${files[i].originalname}`,
       });
     }
-    return this.ipfsService.pinFilesToIPFS(data);
+    const pinataReponse = this.ipfsService.pinFilesToIPFS(data);
+    pinataReponse['FileNames'] = fileNames;
+    return pinataReponse;
   }
 }
