@@ -12,8 +12,14 @@ export class IpfsService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async getPinnedData(ipfsHash: string) {
-    return ipfsHash;
+  async getPinnedData(ipfsHash: string, fileName: string = '') {
+    return (
+      await lastValueFrom(
+        this.httpService.get(
+          `${process.env.PINATA_API_GATEWAY}/ipfs/${ipfsHash}/${fileName}`,
+        ),
+      )
+    ).data;
   }
 
   async pinJsonToIpfs(json) {

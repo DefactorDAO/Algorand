@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
   Version,
@@ -19,8 +20,22 @@ export class DocumentController {
 
   @Version('1')
   @Get('ipfs/:ipfsHash')
-  getIpfsData(@Param('ipfsHash') ipfsHash: string) {
-    return this.documentService.getIpfsData(ipfsHash);
+  @ApiOperation({ summary: 'get the file in directory' })
+  async getIpfsData(
+    @Param('ipfsHash') ipfsHash: string,
+    @Query('fileName') fileName: string,
+  ) {
+    return this.documentService.getIpfsData(ipfsHash, fileName);
+  }
+
+  @Version('2')
+  @Get('ipfs/:ipfsHash')
+  @ApiOperation({ summary: 'get the encrypted file in directory' })
+  async getIpfsEncData(
+    @Param('ipfsHash') ipfsHash: string,
+    @Query('fileName') fileName: string,
+  ) {
+    return this.documentService.getIpfsEncData(ipfsHash, fileName);
   }
 
   @Version('1')
@@ -31,5 +46,17 @@ export class DocumentController {
   @UseInterceptors(FilesInterceptor('documents'))
   uploadToIpfs(@UploadedFiles() documents) {
     return this.documentService.uploadToIpfs(documents);
+  }
+
+  @Version('2')
+  @Post('ipfs')
+  @ApiOperation({
+    summary: 'uploading multiple documents to IPFS as Encrypted',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: FilesUploadDto })
+  @UseInterceptors(FilesInterceptor('documents'))
+  uploadEncToIpfs(@UploadedFiles() documents) {
+    return this.documentService.uploadEncToIpfs(documents);
   }
 }
