@@ -13,7 +13,6 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DocumentService } from './document.service';
 import { FilesUploadDto } from './dto/files-upload.dto';
-import { PassThrough } from 'stream';
 
 @ApiTags('Document')
 @Controller('document')
@@ -28,15 +27,7 @@ export class DocumentController {
     @Param('ipfsHash') ipfsHash: string,
     @Query('fileName') fileName: string,
   ) {
-    const ipfsFile = await this.documentService.getIpfsData(ipfsHash, fileName);
-    res.set({
-      'Content-Disposition': `attachment; filename=${fileName}`,
-    });
-
-    var readStream = new PassThrough();
-    readStream.end(ipfsFile);
-
-    readStream.pipe(res);
+    return this.documentService.getIpfsData(ipfsHash, fileName);
   }
 
   @Version('1')
