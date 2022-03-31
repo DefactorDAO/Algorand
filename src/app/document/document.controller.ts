@@ -21,13 +21,24 @@ export class DocumentController {
 
   @Version('1')
   @Get('ipfs/:ipfsHash')
-  @ApiOperation({ summary: 'get the files in directory' })
+  @ApiOperation({ summary: 'get the file in directory' })
   async getIpfsData(
     @Res() res,
     @Param('ipfsHash') ipfsHash: string,
     @Query('fileName') fileName: string,
   ) {
     return this.documentService.getIpfsData(ipfsHash, fileName);
+  }
+
+  @Version('2')
+  @Get('ipfs/:ipfsHash')
+  @ApiOperation({ summary: 'get the encrypted file in directory' })
+  async getIpfsEncData(
+    @Res() res,
+    @Param('ipfsHash') ipfsHash: string,
+    @Query('fileName') fileName: string,
+  ) {
+    return this.documentService.getIpfsEncData(ipfsHash, fileName);
   }
 
   @Version('1')

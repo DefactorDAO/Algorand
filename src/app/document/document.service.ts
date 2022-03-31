@@ -14,6 +14,16 @@ export class DocumentService {
     return this.ipfsService.getPinnedData(ipfsHash, fileName);
   }
 
+  async getIpfsEncData(ipfsHash: string, fileName) {
+    const encryptedBase64 = await this.ipfsService.getPinnedData(
+      ipfsHash,
+      fileName,
+    );
+    const encryptedBuffer = Buffer.from(encryptedBase64, 'base64');
+    const filecontent = this.aesService.decrypt(encryptedBuffer);
+    return filecontent;
+  }
+
   async uploadToIpfs(files: Express.Multer.File[]) {
     const data = new FormData();
     const fileNames = [];
@@ -41,7 +51,7 @@ export class DocumentService {
         filepath: `files/${files[i].originalname}`,
       });
     }
-    const pinataReponse = this.ipfsService.pinFilesToIPFS(data);
+    const pinataReponse = await this.ipfsService.pinFilesToIPFS(data);
     pinataReponse['FileNames'] = fileNames;
     return pinataReponse;
   }
