@@ -24,4 +24,17 @@ export class DocumentService {
     }
     return this.ipfsService.pinFilesToIPFS(data);
   }
+
+  async uploadEncToIpfs(files: Express.Multer.File[]) {
+    const data = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      const encryptedFileBase64 = Buffer.from(
+        this.aesService.encrypt(files[i].buffer),
+      ).toString('base64');
+      data.append('file', encryptedFileBase64, {
+        filepath: `files/${files[i].originalname}`,
+      });
+    }
+    return this.ipfsService.pinFilesToIPFS(data);
+  }
 }
