@@ -32,4 +32,16 @@ export class DocumentController {
   uploadToIpfs(@UploadedFiles() documents) {
     return this.documentService.uploadToIpfs(documents);
   }
+
+  @Version('2')
+  @Post('ipfs')
+  @ApiOperation({
+    summary: 'uploading multiple documents to IPFS as Encrypted',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: FilesUploadDto })
+  @UseInterceptors(FilesInterceptor('documents'))
+  uploadEncToIpfs(@UploadedFiles() documents) {
+    return this.documentService.uploadEncToIpfs(documents);
+  }
 }
