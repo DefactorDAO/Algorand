@@ -4,12 +4,14 @@ import {
   Param,
   Post,
   Query,
+  Res,
   UploadedFiles,
   UseInterceptors,
   Version,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { DocumentService } from './document.service';
 import { FilesUploadDto } from './dto/files-upload.dto';
 
@@ -32,10 +34,16 @@ export class DocumentController {
   @Get('ipfs/:ipfsHash')
   @ApiOperation({ summary: 'get the encrypted file in directory' })
   async getIpfsEncData(
+    @Res() res: Response,
     @Param('ipfsHash') ipfsHash: string,
     @Query('fileName') fileName: string,
   ) {
-    return this.documentService.getIpfsEncData(ipfsHash, fileName);
+    const fileContentBuffer = await this.documentService.getIpfsEncData(
+      ipfsHash,
+      fileName,
+    );
+    res.set('Content-disposition', 'attachment; filename=' + fileName);
+    res.send(fileContentBuffer);
   }
 
   @Version('1')
