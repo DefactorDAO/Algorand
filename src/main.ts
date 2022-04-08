@@ -1,8 +1,16 @@
+import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
+import swaggerConfig from './config/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  app.setGlobalPrefix('api');
+  app.enableCors({ origin: process.env.CORS });
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+  swaggerConfig(app);
+  await app.listen(parseInt(process.env.PORT) || 3000);
 }
 bootstrap();
