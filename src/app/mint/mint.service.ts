@@ -6,6 +6,7 @@ import {
 import { AccountService } from 'src/shared/algorand/account/account.service';
 import { AlgorandService } from 'src/shared/algorand/algorand.service';
 import { IpfsService } from 'src/shared/ipfs/ipfs.service';
+import { MintV2Dto } from './dto/mint-v2.dto';
 
 @Injectable()
 export class MintService {
@@ -38,4 +39,6 @@ export class MintService {
     const tx = await algoClient.sendRawTransaction(rawSignedTnx).do();
     return waitForConfirmation(algoClient, tx.txId, 4);
   }
+
+  async mintV2(data: MintV2Dto) {}
 }
