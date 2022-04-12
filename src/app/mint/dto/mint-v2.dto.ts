@@ -32,6 +32,9 @@ class InvoiceFiles {
 
   @ApiProperty()
   publicAddress: string;
+
+  @ApiProperty()
+  fileNames: [string];
 }
 
 class Scoring {
@@ -48,17 +51,6 @@ class Scoring {
 class Trade {
   @ApiProperty()
   crowdsInsurance: string;
-}
-
-class Documents {
-  @ApiProperty({ type: 'enum', enum: DocumentStorage })
-  storage: DocumentStorage;
-
-  @ApiProperty()
-  hash: string;
-
-  @ApiProperty()
-  fileNames: [string];
 }
 
 class MetaData {
@@ -106,9 +98,6 @@ class MetaData {
 
   @ApiProperty()
   trade: Trade;
-
-  @ApiProperty()
-  documents: Documents;
 }
 
 export class MintV2Dto {
