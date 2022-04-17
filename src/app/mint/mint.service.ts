@@ -7,6 +7,7 @@ import { AccountService } from 'src/shared/algorand/account/account.service';
 import { AlgorandService } from 'src/shared/algorand/algorand.service';
 import { IpfsService } from 'src/shared/ipfs/ipfs.service';
 import { MintV2Dto } from './dto/mint-v2.dto';
+import { hrtime } from 'process';
 
 @Injectable()
 export class MintService {
@@ -43,9 +44,16 @@ export class MintService {
   async mintV2(data: MintV2Dto) {
     const algoClient = this.algorandService.client();
     const account = this.accountService.getAccountFromEnvMnemonic();
+
+    const startPinning = hrtime.bigint();
     const pinataResponse = await this.ipfsService.pinJsonToIpfs(data.metadata);
+    const endPinning = hrtime.bigint();
+    const pinningTime = endPinning - startPinning;
+
     const sp = await algoClient.getTransactionParams().do();
     const assetIndexes = [];
+
+    const startMinting = hrtime.bigint();
     for (let i = 0; i < data.mint; i++) {
       const txn = makeAssetCreateTxnWithSuggestedParamsFromObject({
         from: account.addr,
@@ -63,6 +71,16 @@ export class MintService {
       const confirmation = await waitForConfirmation(algoClient, tx.txId, 10);
       assetIndexes[i] = confirmation['asset-index'];
     }
-    return { assetIndexes };
+    const endMinting = hrtime.bigint();
+    const mintingTime = endMinting - startMinting;
+
+    return {
+      assetIndexes,
+      responseTime: {
+        uint: 'ns',
+        pinataService: pinningTime.toString(),
+        NftMint: mintingTime.toString(),
+      },
+    };
   }
 }
