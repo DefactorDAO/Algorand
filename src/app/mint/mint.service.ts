@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   makeAssetCreateTxnWithSuggestedParamsFromObject,
   waitForConfirmation,
@@ -42,45 +42,51 @@ export class MintService {
   }
 
   async mintV2(data: MintV2Dto) {
-    const algoClient = this.algorandService.client();
-    const account = this.accountService.getAccountFromEnvMnemonic();
+    try {
+      const algoClient = this.algorandService.client();
+      const account = this.accountService.getAccountFromEnvMnemonic();
 
-    const startPinning = hrtime.bigint();
-    const pinataResponse = await this.ipfsService.pinJsonToIpfs(data.metadata);
-    const endPinning = hrtime.bigint();
-    const pinningTime = endPinning - startPinning;
+      const startPinning = hrtime.bigint();
+      const pinataResponse = await this.ipfsService.pinJsonToIpfs(
+        data.metadata,
+      );
+      const endPinning = hrtime.bigint();
+      const pinningTime = endPinning - startPinning;
 
-    const sp = await algoClient.getTransactionParams().do();
-    const assetIndexes = [];
+      const sp = await algoClient.getTransactionParams().do();
+      const assetIndexes = [];
 
-    const startMinting = hrtime.bigint();
-    for (let i = 0; i < data.mint; i++) {
-      const txn = makeAssetCreateTxnWithSuggestedParamsFromObject({
-        from: account.addr,
-        suggestedParams: sp,
-        total: 1,
-        decimals: 0,
-        defaultFrozen: false,
-        assetName: 'Defactor_NFT',
-        unitName: 'Invoice',
-        note: Uint8Array.of(i),
-        assetURL: `${process.env.PINATA_API_GATEWAY}/ipfs/${pinataResponse.IpfsHash}`,
-      });
-      const rawSignedTnx = txn.signTxn(account.sk);
-      const tx = await algoClient.sendRawTransaction(rawSignedTnx).do();
-      const confirmation = await waitForConfirmation(algoClient, tx.txId, 10);
-      assetIndexes[i] = confirmation['asset-index'];
+      const startMinting = hrtime.bigint();
+      for (let i = 0; i < data.mint; i++) {
+        const txn = makeAssetCreateTxnWithSuggestedParamsFromObject({
+          from: account.addr,
+          suggestedParams: sp,
+          total: 1,
+          decimals: 0,
+          defaultFrozen: false,
+          assetName: 'Defactor_NFT',
+          unitName: 'Invoice',
+          note: Uint8Array.of(i),
+          assetURL: `${process.env.PINATA_API_GATEWAY}/ipfs/${pinataResponse.IpfsHash}`,
+        });
+        const rawSignedTnx = txn.signTxn(account.sk);
+        const tx = await algoClient.sendRawTransaction(rawSignedTnx).do();
+        const confirmation = await waitForConfirmation(algoClient, tx.txId, 10);
+        assetIndexes[i] = confirmation['asset-index'];
+      }
+      const endMinting = hrtime.bigint();
+      const mintingTime = endMinting - startMinting;
+
+      return {
+        assetIndexes,
+        responseTime: {
+          uint: 'ns',
+          pinataService: pinningTime.toString(),
+          NftMint: mintingTime.toString(),
+        },
+      };
+    } catch (e) {
+      throw new BadRequestException(e.toString());
     }
-    const endMinting = hrtime.bigint();
-    const mintingTime = endMinting - startMinting;
-
-    return {
-      assetIndexes,
-      responseTime: {
-        uint: 'ns',
-        pinataService: pinningTime.toString(),
-        NftMint: mintingTime.toString(),
-      },
-    };
   }
 }
