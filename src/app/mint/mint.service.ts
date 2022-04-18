@@ -82,7 +82,7 @@ export class MintService {
         responseTime: {
           uint: 'ns',
           pinataService: pinningTime.toString(),
-          NftMint: mintingTime.toString(),
+          nftMint: mintingTime.toString(),
         },
       };
     } catch (e) {
