@@ -37,3 +37,8 @@ The executing of the application consist of 2 steps.
 3. copy `.env.tempalte` to `.env` and edit it.
 4. run the development server.  
    `npm run start:dev`
+
+### Application URLS
+
+- Documentation - `/swagger`
+- Rest API - `/api/{version}/`
