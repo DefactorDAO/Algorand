@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { AesService } from 'src/shared/aes/aes.service';
 import { IpfsService } from 'src/shared/ipfs/ipfs.service';
 import * as FormData from 'form-data';
@@ -40,19 +40,23 @@ export class DocumentService {
   }
 
   async uploadEncToIpfs(files: Express.Multer.File[]) {
-    const data = new FormData();
-    const fileNames = [];
-    for (let i = 0; i < files.length; i++) {
-      fileNames.push(files[i].originalname);
-      const encryptedFileBase64 = Buffer.from(
-        this.aesService.encrypt(files[i].buffer),
-      ).toString('base64');
-      data.append('file', encryptedFileBase64, {
-        filepath: `files/${files[i].originalname}`,
-      });
+    try {
+      const data = new FormData();
+      const fileNames = [];
+      for (let i = 0; i < files.length; i++) {
+        fileNames.push(files[i].originalname);
+        const encryptedFileBase64 = Buffer.from(
+          this.aesService.encrypt(files[i].buffer),
+        ).toString('base64');
+        data.append('file', encryptedFileBase64, {
+          filepath: `files/${files[i].originalname}`,
+        });
+      }
+      const pinataReponse = await this.ipfsService.pinFilesToIPFS(data);
+      pinataReponse['FileNames'] = fileNames;
+      return pinataReponse;
+    } catch (e) {
+      throw new BadRequestException(e);
     }
-    const pinataReponse = await this.ipfsService.pinFilesToIPFS(data);
-    pinataReponse['FileNames'] = fileNames;
-    return pinataReponse;
   }
 }
