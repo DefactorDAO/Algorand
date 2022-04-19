@@ -8,4 +8,5 @@ export default (): TypeOrmModuleOptions => ({
   username: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASS,
   synchronize: JSON.parse(process.env.DATABASE_SYNC),
+  entities: ['dist/**/*.entity{.ts,.js}'],
 });
