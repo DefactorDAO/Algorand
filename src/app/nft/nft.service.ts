@@ -38,8 +38,8 @@ export class NftService {
 
     const asset = {
       assetInfo: assetInfo['created-asset'],
-      metadata,
       privateData,
+      metadata,
     };
     return asset;
   }
