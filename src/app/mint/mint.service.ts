@@ -8,6 +8,7 @@ import { AlgorandService } from 'src/shared/algorand/algorand.service';
 import { IpfsService } from 'src/shared/ipfs/ipfs.service';
 import { MintV2Dto } from './dto/mint-v2.dto';
 import { hrtime } from 'process';
+import { AssetEntity } from './entity/asset.entity';
 
 @Injectable()
 export class MintService {
@@ -77,8 +78,20 @@ export class MintService {
       const endMinting = hrtime.bigint();
       const mintingTime = endMinting - startMinting;
 
+      const assetInsertData = assetIndexes.map((id) => {
+        return {
+          assetId: id,
+          creator: account.addr,
+          sellerCompanyName: data.privateData.sellerCompanyName,
+          buyerCompanyName: data.privateData.buyerCompanyName,
+        };
+      });
+
+      const assetCreated = await AssetEntity.create(assetInsertData);
+      const assets = await AssetEntity.save(assetCreated);
+
       return {
-        assetIndexes,
+        assets,
         responseTime: {
           uint: 'ns',
           pinataService: pinningTime.toString(),

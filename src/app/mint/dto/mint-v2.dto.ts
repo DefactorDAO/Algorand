@@ -100,9 +100,21 @@ class MetaData {
   trade: Trade;
 }
 
+export class PrivateData {
+  @ApiProperty()
+  sellerCompanyName: string;
+
+  @ApiProperty()
+  buyerCompanyName: string;
+}
+
 export class MintV2Dto {
   @ApiProperty()
+  privateData: PrivateData;
+
+  @ApiProperty()
   metadata: MetaData;
+
   @ApiProperty()
   mint: number;
 }
