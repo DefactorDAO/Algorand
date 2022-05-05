@@ -55,7 +55,7 @@ class Trade {
 
 class MetaData {
   @ApiProperty()
-  docNum: number;
+  docNum: string;
 
   @ApiProperty()
   buyer: Buyer;
